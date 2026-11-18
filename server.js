@@ -34,7 +34,35 @@ const QS = [
   { c: '정보 전달 글쓰기', q: '정보 전달 글쓰기의 첫 단계는?', o: ['고쳐 쓰기', '글의 목적·독자·주제 정하기', '제목만 쓰기', '글 발표하기'], a: 1, e: '쓰기 전에 목적, 독자, 주제를 정합니다.' },
   { c: '정보 전달 글쓰기', q: '글에 활용하기 알맞은 자료는?', o: ['출처를 알 수 없는 소문', '출처가 분명한 자료', '친구의 추측', '근거 없는 댓글'], a: 1, e: '출처가 분명하고 믿을 수 있는 자료를 사용합니다.' },
   { c: '정보 전달 글쓰기', q: '두 대상의 공통점과 차이점을 견주어 설명하는 방법은?', o: ['정의', '예시', '비교와 대조', '분류'], a: 2, e: '견주어 설명하는 방법이 비교와 대조입니다.' },
+  // ---- 고난도 객관식 (d: 난이도) ----
+  { d: '고난도', c: '품사', q: "'그는 아주 새 자전거를 샀다.'에서 관형사는?", o: ['그는', '아주', '새', '샀다'], a: 2, e: "'새'는 체언 '자전거'를 꾸미는 관형사이고, '아주'는 부사입니다." },
+  { d: '고난도', c: '품사', q: '다음 중 품사가 다른 하나는?', o: ['크다', '작다', '달리다', '예쁘다'], a: 2, e: '나머지는 형용사이고 달리다는 동사입니다.' },
+  { d: '고난도', c: '품사', q: '다음 중 감탄사는?', o: ['아이고', '바로', '모든', '그리고'], a: 0, e: "'바로·그리고'는 부사, '모든'은 관형사입니다." },
+  { d: '고난도', c: '품사', q: "'어제 읽은 책이 재미있다'에서 '재미있다'의 품사는?", o: ['동사', '형용사', '명사', '부사'], a: 1, e: '상태나 성질을 나타내므로 형용사입니다.' },
+  { d: '고난도', c: '요약하며 읽기', q: '다음 중 요약하기 규칙에 어긋나는 것은?', o: ['중요하지 않은 내용 삭제하기', '비슷한 내용 묶기', '내 의견을 덧붙여 쓰기', '중심 내용 선택하기'], a: 2, e: '요약에는 글쓴이의 생각만 담고 내 의견은 덧붙이지 않습니다.' },
+  { d: '고난도', c: '토의', q: '의견이 서로 다를 때 토의에서 가장 알맞은 태도는?', o: ['다수결로 바로 끝내기', '각 의견의 장단점을 비교해 절충안 찾기', '목소리 큰 사람 따르기', '의견을 내지 않기'], a: 1, e: '의견을 비교·조정해 더 나은 방안을 찾는 것이 토의입니다.' },
+  { d: '고난도', c: '토의', q: '토의 주제로 가장 알맞은 것은?', o: ['우리 반 쓰레기를 줄이는 방법', '라면과 떡볶이 중 무엇이 더 맛있는가', '햇빛은 따뜻하다', '지구는 둥글다'], a: 0, e: '토의는 해결해야 할 문제를 주제로 삼습니다.' },
+  { d: '고난도', c: '갈등', q: "'형은 동생과 장난감 때문에 다투었다.'에 나타난 갈등은?", o: ['인물 간의 갈등', '내적 갈등', '인물과 자연의 갈등', '인물과 사회의 갈등'], a: 0, e: '인물과 인물 사이의 갈등입니다.' },
+  { d: '고난도', c: '정보 전달 글쓰기', q: '다음 중 정보 전달 글에 가장 알맞은 문장은?', o: ['이 음식은 정말 최고라서 꼭 먹어야 해!', '물은 1기압에서 100℃에 끓는다.', '내 생각에는 아마 그럴 것 같다.', '와, 정말 대단하지 않니?'], a: 1, e: '객관적으로 확인할 수 있는 사실을 쓴 문장입니다.' },
+  { d: '고난도', c: '정보 전달 글쓰기', q: "'소설은 꾸며 낸 이야기를 산문으로 쓴 글이다.'에 쓰인 설명 방법은?", o: ['정의', '비교', '예시', '분류'], a: 0, e: "'A는 B이다' 형태로 뜻을 밝히는 방법이 정의입니다." },
+
+  // ---- 주관식 (k: 정답 목록, 띄어쓰기·대소문자 무시) ----
+  { c: '품사', q: '체언 뒤에 붙어 다른 말과의 관계를 나타내는 품사는? (두 글자)', k: ['조사'], e: "'이/가, 을/를, 에' 등이 조사입니다." },
+  { c: '품사', q: "'먹다', '달리다'처럼 움직임을 나타내는 품사는? (두 글자)", k: ['동사'], e: '움직임을 나타내는 말은 동사입니다.' },
+  { c: '품사', q: "'예쁘다', '크다'처럼 성질이나 상태를 나타내는 품사는? (세 글자)", k: ['형용사'], e: '성질·상태를 나타내는 말은 형용사입니다.' },
+  { c: '품사', q: "'매우', '빨리'처럼 용언을 꾸며 주는 품사는? (두 글자)", k: ['부사'], e: '주로 용언을 꾸며 주는 말은 부사입니다.' },
+  { c: '요약하며 읽기', q: '중요하지 않거나 반복되는 내용을 지우는 요약 방법은? (두 글자)', k: ['삭제'], e: '삭제, 선택, 일반화, 재구성 중 삭제입니다.' },
+  { c: '토의', q: '공동의 문제를 해결하려고 여럿이 의견을 나누는 말하기는? (두 글자)', k: ['토의'], e: '문제 해결 방안을 함께 찾는 말하기가 토의입니다.' },
+  { c: '갈등', q: "인물의 마음속에서 일어나는 갈등은 '○○ 갈등'입니다. ○○는? (두 글자)", k: ['내적'], e: '마음속 갈등은 내적 갈등입니다.' },
+  { c: '갈등', q: "이야기 구성 단계 '발단 - 전개 - 위기 - ○○ - 결말'의 빈칸은? (두 글자)", k: ['절정'], e: '갈등이 가장 높아지는 단계는 절정입니다.' },
+  { c: '정보 전달 글쓰기', q: '정보 전달 글에는 믿을 수 있는 ○○가 분명한 자료를 써야 합니다. 빈칸은? (두 글자)', k: ['출처'], e: '자료를 쓸 때는 출처를 확인합니다.' },
+  { d: '고난도', c: '품사', q: "'꽃이 활짝 피었다.'에서 부사인 단어를 쓰세요.", k: ['활짝'], e: "'활짝'이 동사 '피었다'를 꾸미는 부사입니다." },
+  { d: '고난도', c: '품사', q: "'새 책', '헌 옷'처럼 체언을 꾸며 주고 모양이 변하지 않는 품사는? (세 글자)", k: ['관형사'], e: '체언 앞에서 꾸미는 말은 관형사입니다.' },
+  { d: '고난도', c: '품사', q: "'아, 비가 온다!'에서 감탄사인 단어를 쓰세요.", k: ['아'], e: "느낌을 나타내는 '아'가 감탄사입니다." },
+  { d: '고난도', c: '정보 전달 글쓰기', q: '대상을 종류별로 나누어 설명하는 방법은? (두 글자)', k: ['분류'], e: '종류에 따라 나누어 설명하는 방법이 분류입니다.' },
 ];
+
+const norm = (t) => String(t ?? '').replace(/\s+/g, '').toLowerCase();
 
 const users = new Map();   // socket.id -> 닉네임
 const rooms = new Map();   // roomId -> room
@@ -92,7 +120,7 @@ function round(r) {
     const qi = r.pool.pop(), q = QS[qi];
     r.match.push({ a, b, qi, ans: {} });
     [[a, b], [b, a]].forEach(([x, y]) => io.to(x).emit('round', {
-      no: r.no, q: { c: q.c, q: q.q, o: q.o }, opp: r.players.get(y).nick, deadline: r.start + QUESTION_SEC * 1000, endAt: r.endAt,
+      no: r.no, q: { c: q.c, d: q.d || '기본', q: q.q, o: q.o || null }, opp: r.players.get(y).nick, deadline: r.start + QUESTION_SEC * 1000, endAt: r.endAt,
     }));
   });
   if (best.bye) io.to(best.bye).emit('bye', { no: r.no, endAt: r.endAt });
@@ -104,7 +132,7 @@ function reveal(r) {
   const ms = r.match; r.match = null;
   ms.forEach(m => {
     const q = QS[m.qi], A = r.players.get(m.a), B = r.players.get(m.b);
-    const info = (id) => { const x = m.ans[id]; return x ? { c: x.c, t: +x.t.toFixed(2), ok: x.c === q.a } : { c: -1, t: null, ok: false }; };
+    const info = (id) => { const x = m.ans[id]; return x ? { c: x.c, t: +x.t.toFixed(2), ok: q.k ? q.k.includes(norm(x.c)) : x.c === q.a } : { c: -1, t: null, ok: false }; };
     const ia = info(m.a), ib = info(m.b);
     let w = null;
     if (ia.ok && ib.ok) w = ia.t <= ib.t ? m.a : m.b;   // 둘 다 정답이면 더 빠른 사람
@@ -114,7 +142,7 @@ function reveal(r) {
     const wp = w && r.players.get(w);
     if (wp) { wp.pts += WIN_POINTS; wp.wins++; }
     [[m.a, ia, m.b, ib], [m.b, ib, m.a, ia]].forEach(([id, me, oid, op]) => io.to(id).emit('reveal', {
-      ans: q.a, exp: q.e, me, opp: { ...op, nick: r.players.get(oid)?.nick || '(퇴장)' },
+      ans: q.k ? q.k[0] : q.a, short: !!q.k, exp: q.e, me, opp: { ...op, nick: r.players.get(oid)?.nick || '(퇴장)' },
       result: w ? (w === id ? 'win' : 'lose') : 'draw', pts: r.players.get(id)?.pts ?? 0,
     }));
   });
@@ -127,7 +155,7 @@ function finish(r) {
     .sort((a, b) => b.pts - a.pts || b.wins - a.wins);
   rank.forEach((x, i) => { x.rank = i > 0 && x.pts === rank[i - 1].pts && x.wins === rank[i - 1].wins ? rank[i - 1].rank : i + 1; });
   const stats = {
-    q: Object.entries(r.stats.q).map(([i, s]) => ({ c: QS[i].c, q: QS[i].q, att: s.att, rate: Math.round(s.cor / s.att * 100) })),
+    q: Object.entries(r.stats.q).map(([i, s]) => ({ d: QS[i].d || '기본', c: QS[i].c, q: QS[i].q, att: s.att, rate: Math.round(s.cor / s.att * 100) })),
     p: [...r.players.values()].map(p => ({ nick: p.nick, att: p.att, rate: p.att ? Math.round(p.cor / p.att * 100) : 0 })),
   };
   r.players.forEach((_, id) => io.to(id).emit('end', { rank, stats: id === r.host ? stats : null })); // 통계는 방장에게만
@@ -177,7 +205,9 @@ io.on('connection', (socket) => {
     const r = rooms.get(socket.data.room);
     if (!r || r.state !== 'play' || !r.match) return;
     const m = r.match.find(m => m.a === socket.id || m.b === socket.id);
-    if (!m || m.ans[socket.id] || !(c >= 0 && c < 4)) return;
+    if (!m || m.ans[socket.id]) return;
+    if (QS[m.qi].k) { c = String(c ?? '').trim().slice(0, 30); if (!c) return; }   // 주관식
+    else if (!(c >= 0 && c < 4)) return;                                           // 객관식
     m.ans[socket.id] = { c, t: (Date.now() - r.start) / 1000 };
     socket.emit('picked', c);
   });
