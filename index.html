@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>국어 1:1 퀴즈 대결</title>
+<title>국어 퀴즈 대결</title>
 <style>
 :root{--bg:#f6f8fc;--card:#fff;--line:#dfe5ee;--ink:#1d2433;--sub:#667085;--main:#2f6df6;--ok:#16a34a;--bad:#dc2626;--me:#fff3a3}
 *{box-sizing:border-box}
@@ -36,6 +36,7 @@ label{display:block;font-size:14px;font-weight:600;margin:12px 0 4px}
 .opt.pick{border-color:var(--main);background:#eaf0ff}
 .opt.right{border-color:var(--ok);background:#e7f7ed}
 .opt.wrong{border-color:var(--bad);background:#fdeaea}
+.dh{color:#b45309;font-weight:700}
 .res{font-size:20px;font-weight:800;margin:6px 0}
 .win{color:var(--ok)}.lose{color:var(--bad)}.draw{color:var(--sub)}
 .rk{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px}
@@ -194,15 +195,27 @@ function tick() {
 }
 s.on('round', d => {
   deadline = d.deadline; locked = false; endAt = d.endAt;
-  $('gCat').textContent = d.q.c; $('gOpp').textContent = d.opp; $('gNo').textContent = d.no + '번째 대결';
+  $('gCat').innerHTML = esc(d.q.c) + ' · ' + (d.q.d === '고난도' ? '<span class="dh">고난도</span>' : '기본') + (d.q.o ? '' : ' · 주관식'); $('gOpp').textContent = d.opp; $('gNo').textContent = d.no + '번째 대결';
   $('gQ').textContent = d.q.q; $('gRes').hidden = true;
-  $('gOpts').innerHTML = d.q.o.map((o, i) => `<button class="opt" data-i="${i}">${i + 1}. ${esc(o)}</button>`).join('');
+  $('gOpts').innerHTML = d.q.o
+    ? d.q.o.map((o, i) => `<button class="opt" data-i="${i}">${i + 1}. ${esc(o)}</button>`).join('')
+    : `<div class="row"><input id="sAns" type="text" maxlength="30" placeholder="정답을 입력하세요" autocomplete="off"><button id="sBtn">제출</button></div>`;
+  $('sAns')?.focus();
 });
+function submitShort() {
+  const v = $('sAns')?.value.trim(); if (!v || locked) return;
+  locked = true; s.emit('answer', v);
+}
 $('gOpts').onclick = e => {
+  if (e.target.id === 'sBtn') return submitShort();
   const b = e.target.closest('.opt'); if (!b || locked) return;
   locked = true; s.emit('answer', +b.dataset.i);
 };
-s.on('picked', c => { document.querySelectorAll('.opt')[c]?.classList.add('pick'); });
+$('gOpts').onkeydown = e => { if (e.key === 'Enter' && e.target.id === 'sAns') submitShort(); };
+s.on('picked', c => {
+  if ($('sAns')) { $('sAns').disabled = true; $('sBtn').disabled = true; $('sBtn').textContent = '제출 완료'; }
+  else document.querySelectorAll('.opt')[c]?.classList.add('pick');
+});
 s.on('bye', d => {
   deadline = 0; locked = true; $('gNo').textContent = d.no + '번째 대결';
   $('gCat').textContent = ''; $('gOpp').textContent = '-'; $('gRes').hidden = true; $('gOpts').innerHTML = '';
@@ -218,6 +231,10 @@ s.on('reveal', d => {
   $('rText').textContent = label[0]; $('rText').className = 'res ' + label[1];
   const t = x => x.t == null ? '미응답' : `${x.t}초 ${x.ok ? '(정답)' : '(오답)'}`;
   $('rTime').textContent = `나: ${t(d.me)}  /  ${d.opp.nick}: ${t(d.opp)}`;
+  if (d.short) {
+    const mine = d.me.c === -1 ? '미응답' : d.me.c;
+    $('gOpts').innerHTML = `<p>정답: <b>${esc(d.ans)}</b></p><p class="${d.me.ok ? 'win' : 'lose'}">내 답: <b>${esc(mine)}</b></p>`;
+  }
   $('rExp').textContent = d.exp; $('gRes').hidden = false; $('myPts').textContent = d.pts;
 });
 
