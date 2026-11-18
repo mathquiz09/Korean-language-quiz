@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>국어 1:1 퀴즈 대결</title>
+<style>
+:root{--bg:#f6f8fc;--card:#fff;--line:#dfe5ee;--ink:#1d2433;--sub:#667085;--main:#2f6df6;--ok:#16a34a;--bad:#dc2626;--me:#fff3a3}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;line-height:1.5}
+.wrap{max-width:680px;margin:0 auto;padding:20px 16px 110px}
+h1{font-size:26px;margin:8px 0 4px}h2{font-size:19px;margin:0 0 12px}h3{font-size:16px;margin:22px 0 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px}
+.sub{color:var(--sub);font-size:14px}
+input,button{font:inherit}
+input[type=text],input[type=number]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+input:focus,button:focus-visible{outline:2px solid var(--main);outline-offset:1px}
+button{cursor:pointer;border:0;border-radius:8px;padding:11px 16px;background:var(--main);color:#fff;font-weight:600}
+button.ghost{background:#e9eef8;color:var(--ink)}
+button:disabled{opacity:.5;cursor:default}
+.err{color:var(--bad);font-size:14px;min-height:20px;margin:8px 0 0}
+.row{display:flex;gap:10px;align-items:center}.row>*{flex:1}.row>button{flex:none}
+.room{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.room:last-child{border:0}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;background:#e9eef8;color:var(--sub)}
+.tag.play{background:#fff1d6;color:#9a6700}
+#fab{position:fixed;right:20px;bottom:20px;padding:15px 22px;border-radius:99px;box-shadow:0 4px 14px rgba(47,109,246,.35)}
+.modal{position:fixed;inset:0;background:rgba(20,28,45,.4);display:flex;align-items:center;justify-content:center;padding:16px}
+.modal .card{width:100%;max-width:400px;margin:0}
+label{display:block;font-size:14px;font-weight:600;margin:12px 0 4px}
+.bar{display:flex;justify-content:space-between;font-size:14px;color:var(--sub);margin-bottom:10px}
+.bar b{color:var(--ink)}
+.q{font-size:20px;font-weight:700;margin:8px 0 16px}
+.opt{display:block;width:100%;text-align:left;background:#fff;color:var(--ink);border:2px solid var(--line);margin-bottom:8px;font-weight:500}
+.opt.pick{border-color:var(--main);background:#eaf0ff}
+.opt.right{border-color:var(--ok);background:#e7f7ed}
+.opt.wrong{border-color:var(--bad);background:#fdeaea}
+.res{font-size:20px;font-weight:800;margin:6px 0}
+.win{color:var(--ok)}.lose{color:var(--bad)}.draw{color:var(--sub)}
+.rk{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px}
+.rk:nth-child(odd){background:#f6f8fc}
+.rk .n{width:34px;font-weight:800}.rk .nm{flex:1}.rk .p{font-weight:700}
+.rk.me{background:var(--me)!important}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
+td.r,th.r{text-align:right;white-space:nowrap}
+.pl{display:flex;flex-wrap:wrap;gap:8px}.pl span{background:#e9eef8;border-radius:99px;padding:5px 12px;font-size:14px}
+#toast{position:fixed;left:50%;top:16px;transform:translateX(-50%);background:#1d2433;color:#fff;padding:10px 16px;border-radius:8px;font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<section id="login">
+  <h1>국어 1:1 퀴즈 대결</h1>
+  <p class="sub">중1 국어 · 요약하며 읽기, 품사, 토의, 갈등, 정보를 전달하는 글쓰기</p>
+  <div class="card">
+    <label for="nick" style="margin-top:0">닉네임</label>
+    <div class="row"><input id="nick" type="text" maxlength="12" placeholder="12자 이내" autocomplete="off"><button id="nickBtn">입장</button></div>
+    <p class="err" id="nickErr"></p>
+  </div>
+</section>
+
+<section id="lobby" hidden>
+  <h1>방 목록</h1>
+  <p class="sub"><b id="me"></b> 님 환영합니다</p>
+  <div class="card" id="roomList"></div>
+  <button id="fab">방 만들기</button>
+</section>
+
+<section id="wait" hidden>
+  <div class="card">
+    <h2 id="wName"></h2>
+    <p class="sub" id="wInfo"></p>
+    <div class="pl" id="wPlayers"></div>
+  </div>
+  <div class="row">
+    <button class="ghost" id="leaveBtn">나가기</button>
+    <button id="startBtn" hidden>시작하기</button>
+  </div>
+  <p class="sub" id="wMsg" style="margin-top:12px"></p>
+</section>
+
+<section id="game" hidden>
+  <div class="bar"><span>전체 남은 시간 <b id="tl">-</b></span><span>내 점수 <b id="myPts">0</b>P</span></div>
+  <div class="card">
+    <div class="bar"><span id="gCat"></span><span>상대 <b id="gOpp">-</b></span></div>
+    <div class="bar"><span id="gNo"></span><span>답 공개까지 <b id="cd">-</b></span></div>
+    <div class="q" id="gQ">잠시 후 시작합니다…</div>
+    <div id="gOpts"></div>
+    <div id="gRes" hidden>
+      <div class="res" id="rText"></div>
+      <div class="sub" id="rTime"></div>
+      <div class="sub" id="rExp"></div>
+    </div>
+  </div>
+</section>
+
+<section id="end" hidden>
+  <h1>게임 종료</h1>
+  <p class="sub" id="myRank"></p>
+  <div class="card"><h2>TOP 5</h2><div id="top5"></div>
+    <button class="ghost" id="allBtn" style="margin-top:10px">전체 랭킹 보기</button>
+    <div id="allRank" hidden style="margin-top:10px"></div>
+  </div>
+  <div id="stats" hidden>
+    <div class="card"><h2>방장 전용 통계</h2>
+      <h3 style="margin-top:0">가장 어려웠던 문제</h3><div id="hard"></div>
+      <h3>가장 쉬웠던 문제</h3><div id="easy"></div>
+      <h3>문제별 정답률</h3><div id="qStat"></div>
+      <h3>학생별 정답률</h3><div id="pStat"></div>
+    </div>
+  </div>
+  <button id="homeBtn">로비로</button>
+</section>
+
+</div>
+
+<div class="modal" id="modal" hidden>
+  <div class="card">
+    <h2>방 만들기</h2>
+    <label for="mName">방 이름</label><input id="mName" type="text" maxlength="20" placeholder="예) 1반 국어 대결">
+    <label for="mMax">최대 인원 (2~50)</label><input id="mMax" type="number" min="2" max="50" value="10">
+    <label for="mMin">게임 시간 (분, 1~30)</label><input id="mMin" type="number" min="1" max="30" value="5">
+    <div class="row" style="margin-top:18px"><button class="ghost" id="mCancel">취소</button><button id="mOk">만들기</button></div>
+  </div>
+</div>
+<div id="toast" hidden></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const s = io(), $ = id => document.getElementById(id);
+const esc = t => String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let deadline = 0, endAt = 0, locked = true, iv = null, rankData = null;
+
+const show = v => ['login','lobby','wait','game','end'].forEach(x => $(x).hidden = x !== v);
+const toast = m => { $('toast').textContent = m; $('toast').hidden = false; setTimeout(() => $('toast').hidden = true, 2500); };
+const fmt = ms => { ms = Math.max(0, ms); const t = Math.ceil(ms / 1000); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); };
+
+// 닉네임
+function login() {
+  s.emit('nick', $('nick').value, r => {
+    if (!r.ok) { $('nickErr').textContent = r.msg; $('nick').focus(); return; }
+    $('me').textContent = r.nick; show('lobby');
+  });
+}
+$('nickBtn').onclick = login;
+$('nick').onkeydown = e => { if (e.key === 'Enter') login(); };
+
+// 로비
+s.on('rooms', list => {
+  $('roomList').innerHTML = list.length ? list.map(r => `
+    <div class="room"><div><b>${esc(r.name)}</b> <span class="tag ${r.state === 'play' ? 'play' : ''}">${r.state === 'play' ? '진행 중' : '대기 중'}</span>
+    <div class="sub">방장 ${esc(r.host)} · ${r.count}/${r.max}명 · ${r.minutes}분</div></div>
+    <button data-id="${r.id}" ${r.state !== 'wait' || r.count >= r.max ? 'disabled' : ''}>참가</button></div>`).join('')
+    : '<p class="sub">열린 방이 없습니다. 오른쪽 아래 버튼으로 방을 만들어 보세요.</p>';
+});
+$('roomList').onclick = e => {
+  const id = e.target.dataset.id; if (!id) return;
+  s.emit('join', id, r => { if (!r.ok) toast(r.msg); });
+};
+$('fab').onclick = () => { $('modal').hidden = false; $('mName').focus(); };
+$('mCancel').onclick = () => $('modal').hidden = true;
+$('mOk').onclick = () => {
+  s.emit('create', { name: $('mName').value, max: $('mMax').value, minutes: $('mMin').value });
+  $('modal').hidden = true; $('mName').value = '';
+};
+
+// 대기실
+s.on('room', d => {
+  if (d.state !== 'wait') return;
+  show('wait');
+  const isHost = d.host === s.id;
+  $('wName').textContent = d.name;
+  $('wInfo').textContent = `${d.players.length}/${d.max}명 · 게임 시간 ${d.minutes}분`;
+  $('wPlayers').innerHTML = d.players.map(p => `<span>${esc(p.nick)}${p.id === d.host ? ' 👑' : ''}</span>`).join('');
+  $('startBtn').hidden = !isHost;
+  $('wMsg').textContent = isHost ? '2명 이상 모이면 시작할 수 있어요.' : '방장이 시작할 때까지 기다려 주세요.';
+});
+$('leaveBtn').onclick = () => { s.emit('leave'); show('lobby'); };
+$('startBtn').onclick = () => s.emit('start');
+s.on('toast', toast);
+
+// 게임
+s.on('started', d => {
+  endAt = d.endAt; $('myPts').textContent = 0; clearInterval(iv); iv = setInterval(tick, 200);
+  $('gQ').textContent = '잠시 후 시작합니다…'; $('gOpts').innerHTML = ''; $('gRes').hidden = true;
+  $('gCat').textContent = ''; $('gOpp').textContent = '-'; $('gNo').textContent = ''; show('game');
+});
+function tick() {
+  $('tl').textContent = fmt(endAt - Date.now());
+  $('cd').textContent = deadline > Date.now() ? Math.ceil((deadline - Date.now()) / 1000) + '초' : '-';
+}
+s.on('round', d => {
+  deadline = d.deadline; locked = false; endAt = d.endAt;
+  $('gCat').textContent = d.q.c; $('gOpp').textContent = d.opp; $('gNo').textContent = d.no + '번째 대결';
+  $('gQ').textContent = d.q.q; $('gRes').hidden = true;
+  $('gOpts').innerHTML = d.q.o.map((o, i) => `<button class="opt" data-i="${i}">${i + 1}. ${esc(o)}</button>`).join('');
+});
+$('gOpts').onclick = e => {
+  const b = e.target.closest('.opt'); if (!b || locked) return;
+  locked = true; s.emit('answer', +b.dataset.i);
+};
+s.on('picked', c => { document.querySelectorAll('.opt')[c]?.classList.add('pick'); });
+s.on('bye', d => {
+  deadline = 0; locked = true; $('gNo').textContent = d.no + '번째 대결';
+  $('gCat').textContent = ''; $('gOpp').textContent = '-'; $('gRes').hidden = true; $('gOpts').innerHTML = '';
+  $('gQ').textContent = '이번에는 짝이 없어 쉬어요. 다음 대결을 기다려 주세요.';
+});
+s.on('reveal', d => {
+  deadline = 0; locked = true;
+  document.querySelectorAll('.opt').forEach((b, i) => {
+    b.classList.remove('pick');
+    if (i === d.ans) b.classList.add('right'); else if (i === d.me.c) b.classList.add('wrong');
+  });
+  const label = { win: ['승리! +5P', 'win'], lose: ['패배', 'lose'], draw: ['무승부', 'draw'] }[d.result];
+  $('rText').textContent = label[0]; $('rText').className = 'res ' + label[1];
+  const t = x => x.t == null ? '미응답' : `${x.t}초 ${x.ok ? '(정답)' : '(오답)'}`;
+  $('rTime').textContent = `나: ${t(d.me)}  /  ${d.opp.nick}: ${t(d.opp)}`;
+  $('rExp').textContent = d.exp; $('gRes').hidden = false; $('myPts').textContent = d.pts;
+});
+
+// 결과
+const rk = (x, i) => `<div class="rk ${x.id === s.id ? 'me' : ''}"><span class="n">${x.rank}위</span><span class="nm">${esc(x.nick)}</span><span class="p">${x.pts}P</span></div>`;
+s.on('end', d => {
+  clearInterval(iv); rankData = d.rank; show('end');
+  const mine = d.rank.find(x => x.id === s.id);
+  $('myRank').textContent = mine ? `내 순위 ${mine.rank}위 · ${mine.pts}P` : '';
+  $('top5').innerHTML = d.rank.slice(0, 5).map(rk).join('');
+  $('allRank').hidden = true; $('allBtn').textContent = '전체 랭킹 보기';
+  $('allRank').innerHTML = d.rank.map(rk).join('');
+  $('stats').hidden = !d.stats;
+  if (d.stats) {
+    const q = [...d.stats.q].sort((a, b) => a.rate - b.rate);
+    const line = x => x ? `<b>${x.rate}%</b> · ${esc(x.q)} <span class="sub">(${x.c})</span>` : '<span class="sub">기록 없음</span>';
+    $('hard').innerHTML = line(q[0]); $('easy').innerHTML = line(q[q.length - 1]);
+    $('qStat').innerHTML = `<table><tr><th>문제</th><th class="r">응시</th><th class="r">정답률</th></tr>${q.map(x => `<tr><td>${esc(x.q)}</td><td class="r">${x.att}</td><td class="r">${x.rate}%</td></tr>`).join('')}</table>`;
+    const p = [...d.stats.p].sort((a, b) => b.rate - a.rate);
+    $('pStat').innerHTML = `<table><tr><th>학생</th><th class="r">응시</th><th class="r">정답률</th></tr>${p.map(x => `<tr><td>${esc(x.nick)}</td><td class="r">${x.att}</td><td class="r">${x.rate}%</td></tr>`).join('')}</table>`;
+  }
+});
+$('allBtn').onclick = () => {
+  const open = $('allRank').hidden; $('allRank').hidden = !open;
+  $('allBtn').textContent = open ? '전체 랭킹 닫기' : '전체 랭킹 보기';
+};
+$('homeBtn').onclick = () => { s.emit('leave'); show('lobby'); };
+
+s.on('disconnect', () => { alert('서버와 연결이 끊어졌습니다. 다시 접속해 주세요.'); location.reload(); });
+</script>
+</body>
+</html>
